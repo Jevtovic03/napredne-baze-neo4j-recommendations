@@ -12,8 +12,18 @@ MATCH (other)-[r3:RATED]->(rec:Movie)
 WHERE r3.rating >= $threshold AND NOT (u)-[:RATED]->(rec)
 RETURN rec.title AS movie, count(DISTINCT other) AS score
 ORDER BY score DESC, movie
+LIMIT $limit
 """
 
 
-def fetch_recommendations(driver, user: str, threshold: int) -> List[Dict[str, Any]]:
-    return read_query(driver, RECOMMENDATION_QUERY, {"user": user, "threshold": threshold})
+def fetch_recommendations(
+    driver,
+    user: str,
+    threshold: int,
+    limit: int = 10,
+) -> List[Dict[str, Any]]:
+    return read_query(
+        driver,
+        RECOMMENDATION_QUERY,
+        {"user": user, "threshold": threshold, "limit": limit},
+    )
